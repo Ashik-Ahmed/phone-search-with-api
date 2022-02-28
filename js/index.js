@@ -1,5 +1,6 @@
 const loadPhones = () => {
-    fetch('https://openapi.programming-hero.com/api/phones?search=iphone')
+    const searchValue = document.getElementById("search-box").value;
+    fetch(`https://openapi.programming-hero.com/api/phones?search=${searchValue}`)
         .then(response => response.json())
         .then(data => showPhones(data.data))
 }
@@ -8,6 +9,8 @@ const loadPhones = () => {
 const showPhones = (phones) => {
 
     const searchResultContainer = document.getElementById("search-result");
+
+    searchResultContainer.textContent = ``;
 
     phones.forEach(phone => {
         const name = phone.phone_name;
