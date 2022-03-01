@@ -5,6 +5,13 @@ const detailsContainer = document.getElementById("phone-details");
 const errorMessage = document.getElementById("error-message");
 const searchValue = document.getElementById("search-box");
 
+const clearAllData = () => {
+    // clear previous search result 
+    searchResultContainer.textContent = ``;
+    detailsContainer.textContent = ``;
+    searchValue.value = ``;
+}
+
 const loadPhones = () => {
 
 
@@ -15,35 +22,27 @@ const loadPhones = () => {
             .then(response => response.json())
             .then(data => {
                 if (data.data.length != 0) {
-                    showPhones(data.data)
-                    searchValue.value = ``;
+                    clearAllData();
+                    showPhones(data.data);
                 }
                 else {
                     errorMessage.style.display = "block";
-                    // clear previous search result 
-                    searchResultContainer.textContent = ``;
-                    detailsContainer.textContent = ``;
-                    searchValue.value = ``;
+                    clearAllData();
                 }
             })
     }
     else {
         alert("PLease write something");
-        // clear previous search result 
-        searchResultContainer.textContent = ``;
-        detailsContainer.textContent = ``;
+        clearAllData();
         errorMessage.style.display = "none";
 
-        searchValue.value = ``;
     }
 }
 
 
 const showPhones = phones => {
 
-    // clear previous search result 
-    searchResultContainer.textContent = ``;
-    detailsContainer.textContent = ``;
+    clearAllData();
     errorMessage.style.display = "none";
 
     if (phones.length <= 20) {
@@ -59,8 +58,8 @@ const showPhones = phones => {
         const showAllButton = document.createElement("div");
         showAllButton.innerHTML = `       
             <div class="text-center">
-                <button onclick="showAllPhone('${phones}')" class="btn btn-primary">Show All</button>
-            </div>
+                <button onclick="showMorePhone(${phones.slice(0, 500)}) " class="btn btn-primary">Show All</button>
+            </div >
             `
         searchResultContainer.appendChild(showAllButton);
         console.log(phones);
@@ -68,10 +67,9 @@ const showPhones = phones => {
 
 }
 
+const showMorePhone = phones => {
 
-const showAllPhone = phones => {
-
-    console.log(phones.length);
+    console.log(phones);
     phones.forEach(phone => {
         const id = phone.slug;
         const name = phone.phone_name;
@@ -84,15 +82,45 @@ const showAllPhone = phones => {
 
         // adding info to card 
         phoneContainer.innerHTML = `
-            <div class="card mb-3 border-0 shadow-lg" style="width: 18rem;">
-                <img src="${photo}" class="card-img-top p-2" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
-                    <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
-                    <button onclick="showDetails('${id}')" class="btn btn-primary">See Details</button>
-                </div>
+    < div class="card mb-3 border-0 shadow-lg" style = "width: 18rem;" >
+        <img src="${photo}" class="card-img-top p-2" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
+                <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
+                <button onclick="showDetails('${id}')" class="btn btn-primary")>See Details</button>
             </div>
-        `
+        </div>
+`
+        // showing search result in web page 
+        searchResultContainer.appendChild(phoneContainer);
+    });
+}
+
+
+const showAllPhone = phones => {
+
+    console.log(phones.length);
+    phones.slice(0, 50).forEach(phone => {
+        const id = phone.slug;
+        const name = phone.phone_name;
+        const photo = phone.image;
+        const brand = phone.brand;
+
+        // createing data container 
+        const phoneContainer = document.createElement("div");
+        phoneContainer.classList.add("col-12", "col-md-6", "col-lg-4")
+
+        // adding info to card 
+        phoneContainer.innerHTML = `
+                <div class="card mb-3 border-0 shadow-lg" style = "width: 18rem;">
+                    <img src="${photo}" class="card-img-top p-2" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
+                        <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
+                        <button onclick="showDetails('${id}')" class="btn btn-primary">See Details</button>
+                    </div>
+                </div>
+                `
         // showing search result in web page 
         searchResultContainer.appendChild(phoneContainer);
     });
@@ -101,6 +129,10 @@ const showAllPhone = phones => {
 
 const showDetails = async (id) => {
 
+    // scroll to top of the page 
+    window.scrollTo(0, 0)
+
+    // fetching phone details by phone id 
     const url = `https://openapi.programming-hero.com/api/phone/${id}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -109,17 +141,10 @@ const showDetails = async (id) => {
     const release = data.data.releaseDate;
     const photo = data.data.image;
 
+    // assigning value into variables by destructuring
     const { chipSet, displaySize, memory, storage, sensors } = data.data.mainFeatures;
-    /*
-    const chipset = data.data.mainFeatures.chipSet;
-    const displaySize = data.data.mainFeatures.displaySize;
-    const memory = data.data.mainFeatures.memory;
-    const storage = data.data.mainFeatures.storage;
-    const sensors = [...data.data.mainFeatures.sensors];
-    */
 
-    // const { Bluetooth, GPS, NFC, Radio, USB, WLAN } = data.data?.others;
-
+    // assigning value into variables by optional chaining
     const bluetooth = data.data?.others?.Bluetooth;
     const gps = data.data?.others?.GPS;
     const nfc = data.data?.others?.NFC;
@@ -127,51 +152,15 @@ const showDetails = async (id) => {
     const usb = data.data?.others?.USB;
     const wlan = data.data?.others?.WLAN;
 
-    /*
-    const bluetooth = data.data.others.Bluetooth;
-    const gps = data.data.others.GPS;
-    const nfc = data.data.others.NFC;
-    const radio = data.data.others.Radio;
-    const usb = data.data.others.USB;
-    const wlan = data.data.others.WLAN;
-    */
-    /*
-       if(Bluetooth==undefined){
-        Bluetooth="Not found";
-    }
-    else if(GPS==undefined){
-        GPS="Not found";
-    }
-    else if(NFC==undefined){
-        NFC="Not found";
-    }
-    else if(Radio==undefined){
-        Radio="Not found";
-    }
-    else if(USB==undefined){
-        USB="Not found";
-    }
-    else if(WLAN==undefined){
-        WLAN="Not found";
-    }
-    */
-
-    // console.log(chipSet, displaySize, sensors, memory, storage);
-    // console.log(Bluetooth, GPS, NFC, Radio, USB, WLAN);
-    // console.log(Bluetooth);
-
-
     detailsContainer.textContent = ``;
     setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan);
-    // setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors);
-
 
 }
 
 
 const setDetailsData = (name, release, photo, chipset, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan) => {
 
-
+    // create details information container 
     const phoneInfo = document.createElement("div");
 
     phoneInfo.innerHTML = `
@@ -187,15 +176,14 @@ const setDetailsData = (name, release, photo, chipset, displaySize, memory, stor
                                 <h5 class="card-title">Model: ${name}</h5>
                             </div>
                             <div class="border shadow mb-2 p-3">                            
-                                <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset}</p>
-                                <p class="card-text"><span class="fw-bold">Display: </span>${displaySize}</p>
-                                <p class="card-text"><span class="fw-bold">Memory: </span>${memory}</p>
-                                <p class="card-text"><span class="fw-bold">Storage: </span>${storage}</p>
+                                <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset ? chipset : "Not Found"}</p>
+                                <p class="card-text"><span class="fw-bold">Display: </span>${displaySize ? displaySize : "Not Found"}</p>
+                                <p class="card-text"><span class="fw-bold">Memory: </span>${memory ? memory : "Not Found"}</p>
+                                <p class="card-text"><span class="fw-bold">Storage: </span>${storage ? storage : "Not Found"}</p>
+                                <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors ? sensors : 'Not Found'}</p>
                             </div>
 
-                            <div class="border shadow mb-2 p-3">
-                                
-                                <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors ? sensors : 'Not Found'}</p>
+                            <div class="border shadow mb-2 p-3">                                
                                 <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth ? bluetooth : 'Not Found'}</p>
                                 <p class="card-text"><span class="fw-bold">GPS: </span>${gps ? gps : 'Not Found'}</p>
                                 <p class="card-text"><span class="fw-bold">NFC: </span>${nfc ? nfc : 'Not Found'}</p>
