@@ -39,15 +39,40 @@ const loadPhones = () => {
 }
 
 
-const showPhones = (phones) => {
+const showPhones = phones => {
 
     // clear previous search result 
     searchResultContainer.textContent = ``;
     detailsContainer.textContent = ``;
     errorMessage.style.display = "none";
 
-    phones.forEach(phone => {
+    if (phones.length <= 20) {
+        showAllPhone(phones);
+    }
 
+    else {
+        console.log(phones.length);
+        const limitedPhone = phones.slice(0, 20);
+
+        showAllPhone(limitedPhone);
+
+        const showAllButton = document.createElement("div");
+        showAllButton.innerHTML = `       
+            <div class="text-center">
+                <button onclick="showAllPhone('${phones}')" class="btn btn-primary">Show All</button>
+            </div>
+            `
+        searchResultContainer.appendChild(showAllButton);
+        console.log(phones);
+    }
+
+}
+
+
+const showAllPhone = phones => {
+
+    console.log(phones.length);
+    phones.forEach(phone => {
         const id = phone.slug;
         const name = phone.phone_name;
         const photo = phone.image;
@@ -59,8 +84,8 @@ const showPhones = (phones) => {
 
         // adding info to card 
         phoneContainer.innerHTML = `
-            <div class="card mb-3" style="width: 18rem;">
-                <img src="${photo}" class="card-img-top" alt="...">
+            <div class="card mb-3 border-0 shadow-lg" style="width: 18rem;">
+                <img src="${photo}" class="card-img-top p-2" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
                     <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
@@ -76,13 +101,9 @@ const showPhones = (phones) => {
 
 const showDetails = async (id) => {
 
-    console.log(id);
-
     const url = `https://openapi.programming-hero.com/api/phone/${id}`;
     const response = await fetch(url);
     const data = await response.json();
-
-    console.log(data)
 
     const name = data.data.name;
     const release = data.data.releaseDate;
@@ -107,10 +128,30 @@ const showDetails = async (id) => {
     const usb = data.data.others.USB;
     const wlan = data.data.others.WLAN;
     */
-
+    /*
+       if(Bluetooth==undefined){
+        Bluetooth="Not found";
+    }
+    else if(GPS==undefined){
+        GPS="Not found";
+    }
+    else if(NFC==undefined){
+        NFC="Not found";
+    }
+    else if(Radio==undefined){
+        Radio="Not found";
+    }
+    else if(USB==undefined){
+        USB="Not found";
+    }
+    else if(WLAN==undefined){
+        WLAN="Not found";
+    }
+    */
 
     // console.log(chipSet, displaySize, sensors, memory, storage);
-    console.log(Bluetooth, GPS, NFC, Radio, USB, WLAN);
+    // console.log(Bluetooth, GPS, NFC, Radio, USB, WLAN);
+    console.log(release);
 
 
     detailsContainer.textContent = ``;
@@ -120,14 +161,20 @@ const showDetails = async (id) => {
 }
 
 
-const setDetailsData = (name = "No data found", release = "No data found", photo = "No data found", chipset = "No data found", displaySize = "No data found", memory = "No data found", storage = "No data found", sensors = "No data found", bluetooth = "No data found", gps = "No data found", nfc = "No data found", radio = "No data found", usb = "No data found", wlan = "No data found") => {
+const setDetailsData = (name, release, photo, chipset, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan) => {
 
-    /*
-    if (release == "" || name == "") {
-        this.value = "Not found";
-        console.log(this.value);
+
+    if (release == "") {
+        release = "Not found";
     }
-    */
+
+    console.log(bluetooth);
+    console.log(gps);
+    console.log(nfc);
+    console.log(radio);
+    console.log(usb);
+    console.log(wlan);
+
 
     const phoneInfo = document.createElement("div");
 
@@ -135,23 +182,31 @@ const setDetailsData = (name = "No data found", release = "No data found", photo
             <div class="card mb-3">
                 <div class="row g-0">
                     <div class="col-12 col-lg-4">
-                        <img src="${photo}" class="h-75 rounded-start p-3 m-3" alt="...">
+                        <img src="${photo}" class="h-75 mx-auto rounded-start p-3 m-3 d-flex jusitfy-content-center align-items-center" alt="...">
+                        <p class="card-text text-center text-success"><span class="fw-bold">Release: </span>${release}</p>
                     </div>
                     <div class="col-12 col-lg-8">
                         <div class="card-body ms-lg-4">
-                            <h5 class="card-title">Model: ${name}</h5>
-                            <p class="card-text"><span class="fw-bold">Release: </span>${release}</p>
-                            <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset}</p>
-                            <p class="card-text"><span class="fw-bold">Display: </span>${displaySize}</p>
-                            <p class="card-text"><span class="fw-bold">Memory: </span>${memory}</p>
-                            <p class="card-text"><span class="fw-bold">Storage: </span>${storage}</p>
-                            <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors}</p>
-                            <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth}</p>
-                            <p class="card-text"><span class="fw-bold">GPS: </span>${gps}</p>
-                            <p class="card-text"><span class="fw-bold">NFC: </span>${nfc}</p>
-                            <p class="card-text"><span class="fw-bold">Radio: </span>${radio}</p>
-                            <p class="card-text"><span class="fw-bold">USB: </span>${usb}</p>
-                            <p class="card-text"><span class="fw-bold">WLAN: </span>${wlan}</p>
+                            <div class="border shadow mb-2 p-3">
+                                <h5 class="card-title">Model: ${name}</h5>
+                            </div>
+                            <div class="border shadow mb-2 p-3">                            
+                                <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset}</p>
+                                <p class="card-text"><span class="fw-bold">Display: </span>${displaySize}</p>
+                                <p class="card-text"><span class="fw-bold">Memory: </span>${memory}</p>
+                                <p class="card-text"><span class="fw-bold">Storage: </span>${storage}</p>
+                            </div>
+
+                            <div class="border shadow mb-2 p-3">
+                                
+                                <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors}</p>
+                                <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth}</p>
+                                <p class="card-text"><span class="fw-bold">GPS: </span>${gps}</p>
+                                <p class="card-text"><span class="fw-bold">NFC: </span>${nfc}</p>
+                                <p class="card-text"><span class="fw-bold">Radio: </span>${radio}</p>
+                                <p class="card-text"><span class="fw-bold">USB: </span>${usb}</p>
+                                <p class="card-text"><span class="fw-bold">WLAN: </span>${wlan}</p>
+                            </div>
 
                         </div>
                     </div>
