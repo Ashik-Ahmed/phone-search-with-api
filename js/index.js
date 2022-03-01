@@ -2,14 +2,40 @@
 
 const searchResultContainer = document.getElementById("search-result");
 const detailsContainer = document.getElementById("phone-details");
+const errorMessage = document.getElementById("error-message");
+const searchValue = document.getElementById("search-box");
 
 const loadPhones = () => {
-    const searchValue = document.getElementById("search-box").value;
 
-    // fetching data dynamically from api
-    fetch(`https://openapi.programming-hero.com/api/phones?search=${searchValue}`)
-        .then(response => response.json())
-        .then(data => showPhones(data.data))
+
+    if (document.getElementById("search-box").value != "") {
+
+        // fetching data dynamically from api
+        fetch(`https://openapi.programming-hero.com/api/phones?search=${searchValue.value}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length != 0) {
+                    showPhones(data.data)
+                    searchValue.value = ``;
+                }
+                else {
+                    errorMessage.style.display = "block";
+                    // clear previous search result 
+                    searchResultContainer.textContent = ``;
+                    detailsContainer.textContent = ``;
+                    searchValue.value = ``;
+                }
+            })
+    }
+    else {
+        alert("PLease write something");
+        // clear previous search result 
+        searchResultContainer.textContent = ``;
+        detailsContainer.textContent = ``;
+        errorMessage.style.display = "none";
+
+        searchValue.value = ``;
+    }
 }
 
 
@@ -18,6 +44,7 @@ const showPhones = (phones) => {
     // clear previous search result 
     searchResultContainer.textContent = ``;
     detailsContainer.textContent = ``;
+    errorMessage.style.display = "none";
 
     phones.forEach(phone => {
 
@@ -49,40 +76,71 @@ const showPhones = (phones) => {
 
 const showDetails = async (id) => {
 
+    console.log(id);
+
     const url = `https://openapi.programming-hero.com/api/phone/${id}`;
     const response = await fetch(url);
     const data = await response.json();
 
+    console.log(data)
 
     const name = data.data.name;
+    const release = data.data.releaseDate;
     const photo = data.data.image;
+
+    const { chipSet, displaySize, memory, storage, sensors } = data.data.mainFeatures;
+    /*
     const chipset = data.data.mainFeatures.chipSet;
     const displaySize = data.data.mainFeatures.displaySize;
     const memory = data.data.mainFeatures.memory;
     const storage = data.data.mainFeatures.storage;
     const sensors = [...data.data.mainFeatures.sensors];
+    */
 
+    const { Bluetooth, GPS, NFC, Radio, USB, WLAN } = data.data.others;
+
+    /*
     const bluetooth = data.data.others.Bluetooth;
     const gps = data.data.others.GPS;
     const nfc = data.data.others.NFC;
     const radio = data.data.others.Radio;
     const usb = data.data.others.USB;
     const wlan = data.data.others.WLAN;
+    */
+
+
+    // console.log(chipSet, displaySize, sensors, memory, storage);
+    console.log(Bluetooth, GPS, NFC, Radio, USB, WLAN);
 
 
     detailsContainer.textContent = ``;
+    setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors, Bluetooth, GPS, NFC, Radio, USB, WLAN);
+
+
+}
+
+
+const setDetailsData = (name = "No data found", release = "No data found", photo = "No data found", chipset = "No data found", displaySize = "No data found", memory = "No data found", storage = "No data found", sensors = "No data found", bluetooth = "No data found", gps = "No data found", nfc = "No data found", radio = "No data found", usb = "No data found", wlan = "No data found") => {
+
+    /*
+    if (release == "" || name == "") {
+        this.value = "Not found";
+        console.log(this.value);
+    }
+    */
 
     const phoneInfo = document.createElement("div");
 
     phoneInfo.innerHTML = `
             <div class="card mb-3">
                 <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="${photo}" class="h-100 rounded-start" alt="...">
+                    <div class="col-12 col-lg-4">
+                        <img src="${photo}" class="h-75 rounded-start p-3 m-3" alt="...">
                     </div>
-                    <div class="col-md-8">
-                        <div class="card-body ms-5">
+                    <div class="col-12 col-lg-8">
+                        <div class="card-body ms-lg-4">
                             <h5 class="card-title">Model: ${name}</h5>
+                            <p class="card-text"><span class="fw-bold">Release: </span>${release}</p>
                             <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset}</p>
                             <p class="card-text"><span class="fw-bold">Display: </span>${displaySize}</p>
                             <p class="card-text"><span class="fw-bold">Memory: </span>${memory}</p>
