@@ -118,7 +118,14 @@ const showDetails = async (id) => {
     const sensors = [...data.data.mainFeatures.sensors];
     */
 
-    const { Bluetooth, GPS, NFC, Radio, USB, WLAN } = data.data.others;
+    // const { Bluetooth, GPS, NFC, Radio, USB, WLAN } = data.data?.others;
+
+    const bluetooth = data.data?.others?.Bluetooth;
+    const gps = data.data?.others?.GPS;
+    const nfc = data.data?.others?.NFC;
+    const radio = data.data?.others?.Radio;
+    const usb = data.data?.others?.USB;
+    const wlan = data.data?.others?.WLAN;
 
     /*
     const bluetooth = data.data.others.Bluetooth;
@@ -151,29 +158,18 @@ const showDetails = async (id) => {
 
     // console.log(chipSet, displaySize, sensors, memory, storage);
     // console.log(Bluetooth, GPS, NFC, Radio, USB, WLAN);
-    console.log(release);
+    // console.log(Bluetooth);
 
 
     detailsContainer.textContent = ``;
-    setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors, Bluetooth, GPS, NFC, Radio, USB, WLAN);
+    setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan);
+    // setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors);
 
 
 }
 
 
 const setDetailsData = (name, release, photo, chipset, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan) => {
-
-
-    if (release == "") {
-        release = "Not found";
-    }
-
-    console.log(bluetooth);
-    console.log(gps);
-    console.log(nfc);
-    console.log(radio);
-    console.log(usb);
-    console.log(wlan);
 
 
     const phoneInfo = document.createElement("div");
@@ -183,7 +179,7 @@ const setDetailsData = (name, release, photo, chipset, displaySize, memory, stor
                 <div class="row g-0">
                     <div class="col-12 col-lg-4">
                         <img src="${photo}" class="h-75 mx-auto rounded-start p-3 m-3 d-flex jusitfy-content-center align-items-center" alt="...">
-                        <p class="card-text text-center text-success"><span class="fw-bold">Release: </span>${release}</p>
+                        <p class="card-text text-center text-success"><span class="fw-bold">Release: </span>${release ? release : "No release date found"}</p>
                     </div>
                     <div class="col-12 col-lg-8">
                         <div class="card-body ms-lg-4">
@@ -199,13 +195,13 @@ const setDetailsData = (name, release, photo, chipset, displaySize, memory, stor
 
                             <div class="border shadow mb-2 p-3">
                                 
-                                <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors}</p>
-                                <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth}</p>
-                                <p class="card-text"><span class="fw-bold">GPS: </span>${gps}</p>
-                                <p class="card-text"><span class="fw-bold">NFC: </span>${nfc}</p>
-                                <p class="card-text"><span class="fw-bold">Radio: </span>${radio}</p>
-                                <p class="card-text"><span class="fw-bold">USB: </span>${usb}</p>
-                                <p class="card-text"><span class="fw-bold">WLAN: </span>${wlan}</p>
+                                <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors ? sensors : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth ? bluetooth : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">GPS: </span>${gps ? gps : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">NFC: </span>${nfc ? nfc : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">Radio: </span>${radio ? radio : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">USB: </span>${usb ? usb : 'Not Found'}</p>
+                                <p class="card-text"><span class="fw-bold">WLAN: </span>${wlan ? wlan : 'Not Found'}</p>
                             </div>
 
                         </div>
