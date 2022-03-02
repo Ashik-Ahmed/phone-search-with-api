@@ -2,15 +2,21 @@ const searchResultContainer = document.getElementById("search-result");
 const detailsContainer = document.getElementById("phone-details");
 const errorMessage = document.getElementById("error-message");
 const searchValue = document.getElementById("search-box");
+const restPhones = document.getElementById("rest-phones");
+const spinner = document.getElementById("spinner");
+const seeAllButton = document.getElementById("see-all");
 
 const clearAllData = () => {
     // clear previous search result 
     searchResultContainer.textContent = ``;
     detailsContainer.textContent = ``;
     searchValue.value = ``;
+    restPhones.textContent = ``;
 }
 
 const loadPhones = () => {
+
+    spinner.style.display = "block";
 
     if (document.getElementById("search-box").value != "") {
 
@@ -20,9 +26,12 @@ const loadPhones = () => {
             .then(data => {
                 if (data.data.length != 0) {
                     clearAllData();
+                    spinner.style.display = "none";
                     showPhones(data.data);
                 }
                 else {
+                    spinner.style.display = "none";
+                    seeAllButton.style.display = "none";
                     errorMessage.style.display = "block";
                     clearAllData();
                 }
@@ -30,6 +39,7 @@ const loadPhones = () => {
     }
     else {
         alert("PLease write something");
+        spinner.style.display = "none";
         clearAllData();
         errorMessage.style.display = "none";
     }
@@ -44,63 +54,23 @@ const showPhones = phones => {
         showAllPhone(phones);
     }
     else {
-        console.log(phones.length);
+
         const limitedPhone = phones.slice(0, 20);
 
         showAllPhone(limitedPhone);
 
-        document.getElementById("see-all").style.display = "block";
+        seeAllButton.style.display = "block";
 
         document.getElementById("see-all").addEventListener("click", function () {
+
             showAllPhone(phones.slice(20, phones.length));
             document.getElementById("see-all").style.display = "none";
             console.log(phones.length);
         })
 
-        /*
-        const showAllButton = document.createElement("div");
-        showAllButton.innerHTML = `       
-            <div class="text-center">
-                <button onclick="showMorePhone(${phones.slice(0, 500)}) " class="btn btn-primary">Show All</button>
-            </div >
-            `
-        searchResultContainer.appendChild(showAllButton);
-        console.log(phones);
-
-        */
     }
+
 }
-/*
-const showMorePhone = phones => {
-
-    console.log(phones);
-    phones.forEach(phone => {
-        const id = phone.slug;
-        const name = phone.phone_name;
-        const photo = phone.image;
-        const brand = phone.brand;
-
-        // createing data container 
-        const phoneContainer = document.createElement("div");
-        phoneContainer.classList.add("col-12", "col-md-6", "col-lg-4")
-
-        // adding info to card 
-        phoneContainer.innerHTML = `
-    < div class="card mb-3 border-0 shadow-lg" style = "width: 18rem;" >
-        <img src="${photo}" class="card-img-top p-2" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
-                <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
-                <button onclick="showDetails('${id}')" class="btn btn-primary")>See Details</button>
-            </div>
-        </div>
-`
-        // showing search result in web page 
-        searchResultContainer.appendChild(phoneContainer);
-    });
-}
-*/
-
 
 
 const showAllPhone = phones => {
@@ -122,7 +92,7 @@ const showAllPhone = phones => {
                     <div class="card-body">
                         <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
                         <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
-                        <button onclick="showDetails('${id}')" class="btn bg-seaShell">See Details</button>
+                        <button onclick="showDetails('${id}')" class="btn bg-warning fw-bold text-white">See Details</button>
                     </div>
                 </div>
                 `
@@ -175,10 +145,10 @@ const setDetailsData = (name, release, photo, chipset, displaySize, memory, stor
                     </div>
                     <div class="col-12 col-lg-8">
                         <div class="card-body ms-lg-4">
-                            <div class="border shadow mb-2 p-3">
+                            <div class="border shadow mb-4 p-3 bg-pink rounded-3">
                                 <h5 class="card-title">Model: ${name}</h5>
                             </div>
-                            <div class="border shadow mb-2 p-3">                            
+                            <div class="border shadow mb-4 p-3 bg-pink rounded-3">                            
                                 <p class="card-text"><span class="fw-bold">Chipset: </span>${chipset ? chipset : "Not Found"}</p>
                                 <p class="card-text"><span class="fw-bold">Display: </span>${displaySize ? displaySize : "Not Found"}</p>
                                 <p class="card-text"><span class="fw-bold">Memory: </span>${memory ? memory : "Not Found"}</p>
@@ -186,7 +156,7 @@ const setDetailsData = (name, release, photo, chipset, displaySize, memory, stor
                                 <p class="card-text"><span class="fw-bold">Sensors: </span>${sensors ? sensors : 'Not Found'}</p>
                             </div>
 
-                            <div class="border shadow mb-2 p-3">                                
+                            <div class="border shadow mb-2 p-3 bg-pink rounded-3">                                
                                 <p class="card-text"><span class="fw-bold">Bluetooth: </span>${bluetooth ? bluetooth : 'Not Found'}</p>
                                 <p class="card-text"><span class="fw-bold">GPS: </span>${gps ? gps : 'Not Found'}</p>
                                 <p class="card-text"><span class="fw-bold">NFC: </span>${nfc ? nfc : 'Not Found'}</p>
