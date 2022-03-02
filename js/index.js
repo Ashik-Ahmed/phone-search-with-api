@@ -1,5 +1,3 @@
-
-
 const searchResultContainer = document.getElementById("search-result");
 const detailsContainer = document.getElementById("phone-details");
 const errorMessage = document.getElementById("error-message");
@@ -13,7 +11,6 @@ const clearAllData = () => {
 }
 
 const loadPhones = () => {
-
 
     if (document.getElementById("search-box").value != "") {
 
@@ -35,10 +32,8 @@ const loadPhones = () => {
         alert("PLease write something");
         clearAllData();
         errorMessage.style.display = "none";
-
     }
 }
-
 
 const showPhones = phones => {
 
@@ -48,13 +43,21 @@ const showPhones = phones => {
     if (phones.length <= 20) {
         showAllPhone(phones);
     }
-
     else {
         console.log(phones.length);
         const limitedPhone = phones.slice(0, 20);
 
         showAllPhone(limitedPhone);
 
+        document.getElementById("see-all").style.display = "block";
+
+        document.getElementById("see-all").addEventListener("click", function () {
+            showAllPhone(phones.slice(20, phones.length));
+            document.getElementById("see-all").style.display = "none";
+            console.log(phones.length);
+        })
+
+        /*
         const showAllButton = document.createElement("div");
         showAllButton.innerHTML = `       
             <div class="text-center">
@@ -63,10 +66,11 @@ const showPhones = phones => {
             `
         searchResultContainer.appendChild(showAllButton);
         console.log(phones);
+
+        */
     }
-
 }
-
+/*
 const showMorePhone = phones => {
 
     console.log(phones);
@@ -95,12 +99,13 @@ const showMorePhone = phones => {
         searchResultContainer.appendChild(phoneContainer);
     });
 }
+*/
+
 
 
 const showAllPhone = phones => {
 
-    console.log(phones.length);
-    phones.slice(0, 50).forEach(phone => {
+    phones.forEach(phone => {
         const id = phone.slug;
         const name = phone.phone_name;
         const photo = phone.image;
@@ -108,7 +113,7 @@ const showAllPhone = phones => {
 
         // createing data container 
         const phoneContainer = document.createElement("div");
-        phoneContainer.classList.add("col-12", "col-md-6", "col-lg-4")
+        phoneContainer.classList.add("col-12", "col-md-6", "col-lg-4");
 
         // adding info to card 
         phoneContainer.innerHTML = `
@@ -117,7 +122,7 @@ const showAllPhone = phones => {
                     <div class="card-body">
                         <h5 class="card-title">Model: <span class="text-secondary">${name}</span></h5>
                         <h5 class="card-title">Brand: <span class="text-secondary">${brand}</span></h5>
-                        <button onclick="showDetails('${id}')" class="btn btn-primary">See Details</button>
+                        <button onclick="showDetails('${id}')" class="btn bg-seaShell">See Details</button>
                     </div>
                 </div>
                 `
@@ -154,9 +159,7 @@ const showDetails = async (id) => {
 
     detailsContainer.textContent = ``;
     setDetailsData(name, release, photo, chipSet, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan);
-
 }
-
 
 const setDetailsData = (name, release, photo, chipset, displaySize, memory, storage, sensors, bluetooth, gps, nfc, radio, usb, wlan) => {
 
