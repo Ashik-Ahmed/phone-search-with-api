@@ -40,6 +40,7 @@ const loadPhones = () => {
     else {
         alert("PLease write something");
         spinner.style.display = "none";
+        seeAllButton.style.display = "none";
         clearAllData();
         errorMessage.style.display = "none";
     }
